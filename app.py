@@ -12,15 +12,30 @@ if "history" not in st.session_state:
     st.session_state.history = []
 
 # Title
-st.markdown("<h1 style='text-align: center;'>💬 Sentiment Analysis App</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>💬 Sentiment Analysis Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Analyze text sentiment using BERT 🤖</p>", unsafe_allow_html=True)
 
 st.write("---")
 
-# Input box
+# 🧠 DASHBOARD CARDS
+total = len(st.session_state.history)
+pos = sum(1 for x in st.session_state.history if x[1] == "POSITIVE")
+neg = sum(1 for x in st.session_state.history if x[1] == "NEGATIVE")
+avg_conf = sum(x[2] for x in st.session_state.history)/total if total > 0 else 0
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("📝 Total", total)
+col2.metric("😊 Positive", pos)
+col3.metric("😡 Negative", neg)
+col4.metric("📊 Avg Confidence", f"{avg_conf:.2f}")
+
+st.write("---")
+
+# Input
 user_input = st.text_area("✍️ Enter your text below:", height=150)
 
-# Analyze button
+# Analyze
 if st.button("🔍 Analyze Sentiment"):
     
     if user_input.strip() != "":
@@ -29,44 +44,39 @@ if st.button("🔍 Analyze Sentiment"):
         label = result[0]['label']
         score = result[0]['score']
         
-        # Save history
         st.session_state.history.append((user_input, label, score))
         
-        # Show result
-        st.write("### 📊 Result:")
-        
+        st.write("### 📊 Result")
+
         if label == "POSITIVE":
-            st.success(f"😊 Positive Sentiment\n\nConfidence Score: {score:.2f}")
+            st.success(f"😊 Positive (Confidence: {score:.2f})")
         else:
-            st.error(f"😡 Negative Sentiment\n\nConfidence Score: {score:.2f}")
-        
-        # 🎯 Confidence Meter
+            st.error(f"😡 Negative (Confidence: {score:.2f})")
+
         st.write("### 🎯 Confidence Meter")
         st.progress(int(score * 100))
-        st.write(f"Confidence: {score*100:.1f}%")
+        st.write(f"{score*100:.1f}%")
 
     else:
-        st.warning("⚠️ Please enter some text!")
+        st.warning("⚠️ Enter some text")
 
-# Divider
 st.write("---")
 
-# History section
-st.write("### 🕒 History (Last 5 Results)")
+# History
+st.write("### 🕒 Recent Activity")
 
-# Clear history button
+if st.session_state.history:
+    for text, lab, sc in st.session_state.history[-5:][::-1]:
+        st.write(f"➡️ {text}")
+        st.write(f"{lab} | {sc:.2f}")
+        st.write("---")
+else:
+    st.info("No history yet")
+
+# Clear history
 if st.button("🗑️ Clear History"):
     st.session_state.history = []
     st.success("History cleared!")
 
-# Show history
-if st.session_state.history:
-    for text, lab, sc in st.session_state.history[-5:][::-1]:
-        st.write(f"➡️ **{text}**")
-        st.write(f"Sentiment: {lab} | Confidence: {sc:.2f}")
-        st.write("---")
-else:
-    st.write("No history yet.")
-
 # Footer
-st.markdown("<p style='text-align: center;'>Built using BERT & Streamlit 🚀</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>Built using BERT & Streamlit 🚀</p>", unsafe_allow_html=True)
