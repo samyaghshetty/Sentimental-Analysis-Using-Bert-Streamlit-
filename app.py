@@ -1,71 +1,101 @@
 import streamlit as st
 from transformers import pipeline
+import matplotlib.pyplot as plt
 
 # Page config
 st.set_page_config(page_title="Sentiment Analyzer", page_icon="💬")
 
+# 🌗 Dark mode toggle
+dark_mode = st.toggle("🌗 Dark Mode")
+
+if dark_mode:
+    st.markdown("""
+        <style>
+        .main {background-color: #121212; color: white;}
+        </style>
+    """, unsafe_allow_html=True)
+
 # Load model
 classifier = pipeline("sentiment-analysis")
 
-# Initialize history
+# Title
+st.title("💬 Sentiment Analysis App")
+st.write("Analyze text sentiment using BERT 🤖")
+
+st.write("---")
+
+# Session state
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Title
-st.markdown("<h1 style='text-align: center;'>💬 Sentiment Analysis App</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Analyze text sentiment using BERT 🤖</p>", unsafe_allow_html=True)
+# 🌍 Multi-language input (basic)
+language = st.selectbox("🌍 Select Language", ["English", "Other"])
 
-st.write("---")
+user_input = st.text_area("✍️ Enter your text:", height=150)
 
-# Input box
-user_input = st.text_area("✍️ Enter your text below:", height=150)
+# Buttons
+col1, col2 = st.columns(2)
+with col1:
+    analyze = st.button("🔍 Analyze")
+with col2:
+    clear = st.button("🗑️ Clear History")
 
-# Analyze button
-if st.button("🔍 Analyze Sentiment"):
-    
+# Analyze
+if analyze:
     if user_input.strip() != "":
-        result = classifier(user_input)
-        
+        text = user_input
+
+        # (Simple handling for non-English)
+        if language != "English":
+            text = user_input  # can integrate translator later
+
+        result = classifier(text)
         label = result[0]['label']
         score = result[0]['score']
-        
-        # Save to history
+
+        # Save history
         st.session_state.history.append((user_input, label, score))
-        
-        # Show result
-        st.write("### 📊 Result:")
-        
+
+        st.write("### 📊 Result")
+
         if label == "POSITIVE":
-            st.success(f"😊 Positive Sentiment\n\nConfidence Score: {score:.2f}")
+            st.success(f"😊 Positive (Confidence: {score:.2f})")
         else:
-            st.error(f"😡 Negative Sentiment\n\nConfidence Score: {score:.2f}")
-        
-        # Progress bar
-        st.write("### Confidence Level")
+            st.error(f"😡 Negative (Confidence: {score:.2f})")
+
+        # 🎯 Confidence gauge (progress)
+        st.write("### 🎯 Confidence Meter")
         st.progress(int(score * 100))
-        
+
     else:
-        st.warning("⚠️ Please enter some text!")
+        st.warning("⚠️ Enter some text")
 
-# Divider
-st.write("---")
-
-# History section header
-st.write("### 🕒 History (Last 5 Results)")
-
-# Clear history button
-if st.button("🗑️ Clear History"):
+# Clear history
+if clear:
     st.session_state.history = []
     st.success("History cleared!")
 
-# Show history
+# 📊 Charts (Sentiment stats)
+st.write("---")
+st.write("### 📊 Sentiment Statistics")
+
 if st.session_state.history:
-    for text, lab, sc in st.session_state.history[-5:][::-1]:
-        st.write(f"➡️ **{text}**")
-        st.write(f"Sentiment: {lab} | Confidence: {sc:.2f}")
-        st.write("---")
+    pos = sum(1 for x in st.session_state.history if x[1] == "POSITIVE")
+    neg = sum(1 for x in st.session_state.history if x[1] == "NEGATIVE")
+
+    fig, ax = plt.subplots()
+    ax.pie([pos, neg], labels=["Positive", "Negative"], autopct='%1.1f%%')
+    st.pyplot(fig)
 else:
-    st.write("No history yet.")
+    st.info("No data for chart yet")
+
+# History
+st.write("---")
+st.write("### 🕒 History")
+
+for text, lab, sc in st.session_state.history[-5:][::-1]:
+    st.write(f"{text} → {lab} ({sc:.2f})")
 
 # Footer
-st.markdown("<p style='text-align: center;'>Built using BERT & Streamlit 🚀</p>", unsafe_allow_html=True)
+st.write("---")
+st.caption("Built using BERT + Streamlit 🚀")
