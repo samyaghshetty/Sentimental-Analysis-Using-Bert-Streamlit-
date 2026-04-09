@@ -1,17 +1,19 @@
-# 💬 Sentiment Analysis App (BERT)
+# 💬 Sentiment Analysis Dashboard (BERT)
 
-🚀 A powerful Sentiment Analysis Web App built using **BERT (Transformers)** and **Streamlit** that classifies text as **Positive 😊** or **Negative 😡** with confidence score.
+🚀 A powerful **NLP-based Sentiment Analysis Web App** built using **BERT (Transformers)** and **Streamlit**.
+
+It classifies user input into **Positive 😊** or **Negative 😡** with confidence score and provides **real-time analytics dashboard**.
 
 ---
 
 ## 🔥 Features
 
-✨ Real-time sentiment analysis  
-✨ Built using state-of-the-art BERT model  
-✨ Interactive and user-friendly UI  
-✨ Confidence score with progress bar 📊  
-✨ History tracking of previous inputs 🕒  
-✨ Clear history option 🗑️  
+✨ Real-time sentiment analysis using BERT  
+✨ Interactive dashboard with analytics cards 📊  
+✨ Confidence meter visualization 🎯  
+✨ History tracking of user inputs 🕒  
+✨ Clear history functionality 🗑️  
+✨ Clean and responsive UI  
 
 ---
 
@@ -24,9 +26,24 @@
 
 ---
 
+## 📊 Dashboard Preview
+
+- 📝 Total Analyses  
+- 😊 Positive Count  
+- 😡 Negative Count  
+- 📊 Average Confidence  
+
+---
+
 ## 📸 Demo
 
-👉 Enter text → Click Analyze → Get instant sentiment result!
+👉 Enter text → Click Analyze → Get instant sentiment result with analytics!
+
+---
+
+## 🌐 Live Demo
+
+👉 [Click Here to Try the App](https://sentiment-analysis-bert-app.streamlit.app)
 
 ---
 
@@ -34,9 +51,9 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/your-username/sentiment-analyzer.git
+git clone https://github.com/samyaghshetty/Sentimental-Analysis-Using-Bert-Streamlit-.git
 
-# Go to project folder
+# Navigate into project
 cd sentiment-analyzer
 
 # Install dependencies
